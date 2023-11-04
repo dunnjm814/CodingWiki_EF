@@ -58,3 +58,39 @@ to apply the seed data run a migration!
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Data Annotations
 
+We can Apply Table and Column name changes with data annotations
+[Table("NewName")] [Column("NewColumnName")]
+
+Explicitly make a column required with [Required] attribute
+Explicitly define Primary key with [Key] attribute
+[MaxLength(x)] define the maximum size of a string
+[NotMapped] Property that is doing logic, but property doesnt need to be in database (no column added)
+
+EF Core Powertools extension to create database diagrams 
+
+
+Foreign Key
+Different types of relationships
+1-1: in book example, only one book can have a Detail, one BookDetail can only represent one book
+add reference to related models within both models
+on appropriate table add column for Id that represents the Id Name of the related table
+Add annotation for [ForeignKey("<Model>")]
+when Migration is added, in the add foreign key column a delete action called referentialAction.Cascade is added
+this means that if parent record (book) is deleted, child record will also be deleted.
+For 1 to 1 relations with Books -> BookDetails this makes sense, but what about authors or publishers? We dont want to delete these records when a book is deleted.
+Instead of cascade ReferentialAction, we can choose NoAction (or a variety of other actions (SetNull, SetDefault, etc))
+
+1-Many:
+only need to add relationship to Child model.
+ForeignKey added to Many portion of relationship, and Parent will have a List<t> of all the child relationships
+
+Many-Many:
+in our example, one author can have many books, and one book can have may authors
+With .net 5+ EF core has feature that will automatically create mapping table
+adding List<Author> to Books Model, and List<Book> to Authors Model, EF core will automatically create an association between these two entities
+when we check out AddManyToManyRelation_SkipMappingTable migraiton we can see that this creates the AuthorBook table with all appropriate constraints automatically
+If we want to add an additional column to this table we will need to Manually add this mapping table.
+Definitions must be explicitly defined
+Rather than explicitly setting a table Id for the mapping table, we can use FluentAPI to create a composite key of the two foreign keys in this table
+in ApplicationDbContext we can create a composite key with Entity<T>().HasKey() method
+When we apply this migration, the automaticly generated table was dropped because we created it manually 
