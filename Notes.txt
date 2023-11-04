@@ -1,0 +1,60 @@
+Remove Migration and Update existing table
+
+modify type of column in Book model, add migration to apply data type changes to db. But we want to modify precision decimal
+no tags/attributes available for model precision specifications in EF
+Needs to override OnModelCreating in ApplicationDBCOntext to modify column precisions, etc
+if we have not applied the changePriceColumnToDecimal migration to Db yet we can simply run  'Remove-Migration' 
+if we have applied this change, do not run this or issues will come up, just create a new migration modifying what you need. 
+Running remove-migration will also roll back the snapshot file. 
+now that we have our model-> db overrides set in context we can re-run add-migration with the same name and update the db
+
+Click into CSProj file for data access layer to remove nullable properties
+
+When we ran a migration for Genres table, since we had removed Nullability from the CsProject, the two columns in book that are
+string data type where flagged for alteration in db due to previously allowing null. 
+
+
+Rename Column
+in .net6+ this is easy, rename column in model, add-migration and update db. this applies RenameColumn method.
+prior to .net5, a column rename would drop the column and apply the new one. this is problematic if we have live data.
+to not drop data in the migraiton run `migrationBuilder.SQL("UPDATE dbo.<Table> SET <ColumnToChange>=<NewColumnName>")
+
+Best Practices when to add Migrations:
+1.Add new class / table
+2.Add new property / column to the table
+3.Modify existing property / column in a table
+4.Delete existing property / column in table
+5.Delete a class / table in database
+Always make small changes, keep migrations as small as possible. Validate, validate validate!
+Never Remove a migration from the migration folder unless you KNOW WHAT YOUR DOING. 
+When in doubt, just make a new migration with your desired changes.
+
+
+to remove a table from DB, remove DbSet<TableName> in ApplicationDbContext. 
+
+
+Rollback to Old Migrations:
+Copy migration that you want to rollback to from console.
+update-database with migration name (not the date, just the name like AddBookToDB to undo all migrations we ran after)
+without entity frameworks we have to remember all the database changes 
+Do not do this in production since tables will likely be dropped. 
+
+
+Reverting back and Deleting migration
+if two migrations cancel each other out (remove then re add same table for example) then you can safely delete the migrations
+remove-migration command will also remove migrations
+
+
+Commands:
+Drop-database - will ask you to confirm for obvious reasons
+Update-database - create database and apply all migrations 
+
+
+Seed Data with migrations
+in ApplicationDb context in OnModelCreating method we can add seed data by creating an Entity<t> and using the HasData() method
+either add your models directly into the HasData() method or pass an array of your model into the method
+to apply the seed data run a migration!
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Data Annotations
+

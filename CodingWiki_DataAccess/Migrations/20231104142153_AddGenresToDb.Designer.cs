@@ -3,6 +3,7 @@ using CodingWiki_DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodingWiki_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231104142153_AddGenresToDb")]
+    partial class AddGenresToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,43 +45,6 @@ namespace CodingWiki_DataAccess.Migrations
                     b.HasKey("BookId");
 
                     b.ToTable("Books");
-
-                    b.HasData(
-                        new
-                        {
-                            BookId = 1,
-                            ISBN = "123456",
-                            Price = 10.99m,
-                            Title = "Catcher in the Rye"
-                        },
-                        new
-                        {
-                            BookId = 2,
-                            ISBN = "987654",
-                            Price = 15.99m,
-                            Title = "Lord of the Rings"
-                        },
-                        new
-                        {
-                            BookId = 3,
-                            ISBN = "456123",
-                            Price = 16.50m,
-                            Title = "Book 3"
-                        },
-                        new
-                        {
-                            BookId = 4,
-                            ISBN = "556123",
-                            Price = 17.50m,
-                            Title = "Book 4"
-                        },
-                        new
-                        {
-                            BookId = 5,
-                            ISBN = "656123",
-                            Price = 18.50m,
-                            Title = "Book 5"
-                        });
                 });
 
             modelBuilder.Entity("CodingWiki_Model.Models.Genre", b =>
@@ -89,7 +55,7 @@ namespace CodingWiki_DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreId"));
 
-                    b.Property<int>("DisplayOrder")
+                    b.Property<int>("Display")
                         .HasColumnType("int");
 
                     b.Property<string>("GenreName")
