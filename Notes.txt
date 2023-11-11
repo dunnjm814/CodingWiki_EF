@@ -94,3 +94,12 @@ Definitions must be explicitly defined
 Rather than explicitly setting a table Id for the mapping table, we can use FluentAPI to create a composite key of the two foreign keys in this table
 in ApplicationDbContext we can create a composite key with Entity<T>().HasKey() method
 When we apply this migration, the automaticly generated table was dropped because we created it manually 
+
+
+Fluent API:
+
+Advanced way of specifying model config that covers everything that data annotations can do plus more
+Another way of configuring Domain Classes
+Configure tables and relations in a configuration folder with fluent api
+order of fluent operations: Table info > Column info > Primary Key > Validations > Relations
+apply configuration in ApplicationDbContext

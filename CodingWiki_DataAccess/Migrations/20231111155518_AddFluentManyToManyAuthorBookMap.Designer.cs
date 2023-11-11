@@ -4,6 +4,7 @@ using CodingWiki_DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodingWiki_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231111155518_AddFluentManyToManyAuthorBookMap")]
+    partial class AddFluentManyToManyAuthorBookMap
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace CodingWiki_DataAccess.Migrations
 
                     b.HasIndex("Book_Id");
 
-                    b.ToTable("AuthorBookMaps");
+                    b.ToTable("AuthorBookMap");
                 });
 
             modelBuilder.Entity("CodingWiki_Model.Models.Book", b =>
@@ -208,7 +211,7 @@ namespace CodingWiki_DataAccess.Migrations
 
                     b.HasKey("Author_Id");
 
-                    b.ToTable("Fluent_Authors");
+                    b.ToTable("Fluent_Author");
                 });
 
             modelBuilder.Entity("CodingWiki_Model.Models.Fluent_AuthorBookMap", b =>
@@ -223,7 +226,7 @@ namespace CodingWiki_DataAccess.Migrations
 
                     b.HasIndex("Book_Id");
 
-                    b.ToTable("Fluent_AuthorBookMaps");
+                    b.ToTable("Fluent_AuthorBookMap");
                 });
 
             modelBuilder.Entity("CodingWiki_Model.Models.Fluent_Book", b =>
@@ -252,7 +255,7 @@ namespace CodingWiki_DataAccess.Migrations
 
                     b.HasIndex("Publisher_Id");
 
-                    b.ToTable("Fluent_Books");
+                    b.ToTable("Fluent_Book");
                 });
 
             modelBuilder.Entity("CodingWiki_Model.Models.Fluent_BookDetail", b =>
@@ -301,7 +304,7 @@ namespace CodingWiki_DataAccess.Migrations
 
                     b.HasKey("Publisher_Id");
 
-                    b.ToTable("Fluent_Publishers");
+                    b.ToTable("Fluent_Publisher");
                 });
 
             modelBuilder.Entity("CodingWiki_Model.Models.Publisher", b =>
