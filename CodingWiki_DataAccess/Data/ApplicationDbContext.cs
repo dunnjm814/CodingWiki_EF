@@ -1,6 +1,7 @@
 ﻿using CodingWiki_DataAccess.FluentConfig;
 using CodingWiki_Model.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +27,20 @@ namespace CodingWiki_DataAccess.Data
         public DbSet<Fluent_Author> Fluent_Authors { get; set; }
         public DbSet<Fluent_Publisher> Fluent_Publishers { get; set; }
         public DbSet<Fluent_AuthorBookMap> Fluent_AuthorBookMaps { get; set; }
-       
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // remove local db name before pushing to git please
-            optionsBuilder.UseSqlServer("Server=<LocalDBName>;Database=CodingWiki;TrustServerCertificate=True;Trusted_Connection=True;");
+            // commenting out since we are passing in service for web application. this was hard coded previously for Console app learnings
+            //optionsBuilder.UseSqlServer("Server=<LocalDb>;Database=CodingWiki;TrustServerCertificate=True;Trusted_Connection=True;")
+            //    .LogTo(Console.WriteLine, new[] {DbLoggerCategory.Database.Command.Name}, LogLevel.Information );
+            //On configuring is within the base class as a options override, for MVC since we are passing connection string to the app builder
+            // and injecting the context in the app builder, we need to pass that option to the constructor in this class
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

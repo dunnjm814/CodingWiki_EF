@@ -103,3 +103,68 @@ Another way of configuring Domain Classes
 Configure tables and relations in a configuration folder with fluent api
 order of fluent operations: Table info > Column info > Primary Key > Validations > Relations
 apply configuration in ApplicationDbContext
+
+
+Database Helper Methods:
+working from Console project
+import using statements for DataAccess and Model
+using ApplicationDbContext we can call context.Database.EnsureCreated() to ensure our database is created and has tables.
+Nothing is done to ensure the database schema is compatible with framework model. 
+If database exists but does not have any tables, entity model is used to create the database schema
+FirstOrDefault() returns null or default if no object found, First() will just throw exception
+when passing variables into linq conditions, parameters are automatically created. Note the parameter in where clause in the following log:
+
+info: 11/11/2023 15:09:04.699 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command)
+      Executed DbCommand (46ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [b].[BookId], [b].[ISBN], [b].[Price], [b].[Publisher_Id], [b].[Title]
+      FROM [Books] AS [b]
+      WHERE [b].[Publisher_Id] = @__id_0
+Book 5 - 656123
+
+Find() method can be used to find a record by Primary Key
+-Not a linq method, method on db set itself. 
+
+Single() or SingleOrDefault()
+Returns only one value, but we can filter on any column.
+Expects ONLY one element, if the return has more than one record an exception will be thrown.
+Single will throw exception if no record found, SingleOrDefault will return default or null if no record found. 
+
+Contains, Like, Aggregation
+Filtering Collections of results with Where(x => x.contains(y)) yeilds the following where clause in generated sql
+WHERE [b].[ISBN] LIKE N'%12%'
+What if we wanted to control where the wildcard is placed?
+we can use EF.Functions to control our sql statements in .net.
+using EF.Functions.Like() generated the following where clause
+WHERE [b].[ISBN] LIKE N'12%'
+
+we can also use our aggregate methods in tandem with Where Clauses like Max(), Min(), Count()
+
+Sorting Data:
+OrderBy(), OrderByDescending()
+When we chain sorting conditions, the first in chain will be secondary to the sort.
+In order to chain the above two with the First OrderBy() first we can use ThenByDescending() to ensure the second sort actually happens secondly
+
+Pagination:
+Skip() and Take() methods
+
+Update in EF core
+Find your entity with any of the previously discussed data retreival methods,
+update the property with whatever input you want (if in a list, use foreach)
+call SaveChanges() on open context
+
+Delete in EF core
+Remove() method. Remember to SaveChanges()!
+
+Async Methods
+await context.SaveChangesAsync(). Method must be defined as Async.
+We also have ToListAsync(), no Skip or take Async, but we can call ToListAsync after skips and takes
+AddAsync() to add rows.
+When In doubt, use asynchronous methods. Same performance as non async
+
+MVC Setup for EF Core
+Appsettings: add connection string, app settings exist on server and wont be hard coded into the program
+Program.cs: register db context and pass connection string to builder.configuration.
+ApplicationDbContext: no longer using onConfiguring
+    Connection string is passed to base class within the constructor
+    For logging in output window: add the following to Logging in appsettings.json
+    "Microsoft.EntityFrameworkCore.Database.Command": "Information"
