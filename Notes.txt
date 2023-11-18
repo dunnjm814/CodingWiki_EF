@@ -168,3 +168,50 @@ ApplicationDbContext: no longer using onConfiguring
     Connection string is passed to base class within the constructor
     For logging in output window: add the following to Logging in appsettings.json
     "Microsoft.EntityFrameworkCore.Database.Command": "Information"
+
+
+Projections in EF core
+A way of converting an entity into a c# class with a subset of those properties
+Efficient because you are only selecting needed properties vs all entity properties
+.Select() and create new object (view model for Book in our examples)
+
+IQueryable
+Interface inherits from IEnumerable.
+Difference between the two is how filtering is applied.
+With IEnumerable the query retreives data, then applies filtering in memory
+IQueryable only returns filtered records in data set
+
+Lazy Loading Related Data:
+Install Microsoft.EntityFrameworkCore.Proxies
+Three ways of loading
+Explicit: Related data is loaded at a later time, in separate queries. Utilize reference and collection methods
+Eager: Related data is loaded in initial query itself. Singly query. Include / theninclude
+Lazy: Related data is loaded when navigation property is accessed. Virtual navigation properties. 
+
+Use Watch to track changes 
+EF core starts tracking entities the moment you retrieve the entity
+if an entity is tracked, any changes detected in entity will be persisted to the database during SaveChanges()
+by default, Queries that return entity types are tracked. 
+Tracking requires extra resources
+use AsNoTracking() to override this default tracking.
+    --Useful for read only scenario, quicker to execute because resources are freed from tracking. 
+    -- in program.cs we can also set DbContext options for tracking with
+        -- options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+        -- Sets default 
+
+Views and Stored Procedures
+create empty migration within DataAccessLayer. 
+Similar to how we seed data, we can use.SQL on migrationBuilder to create our views and Stored Procedures from EF core.
+use .ToView() method to map entity to a dbset within context. This would be Read only
+linq methods can be used on views similar to any other ef entity. 
+
+Executing Raw sql:
+FromSQLRaw()
+FromSQLInterpolated()
+Both have async versions
+Must be called from dbSet. _db.Books.FromSQLInterpolated($"Select * from dbo.books where bookid={id}").ToList();
+limitation: cannot specify columns. since we are working with dbSet we must always use select * ....
+
+Stored Procedure:
+Use FromSQLInterpolated() passing stored procedure execution strings, passing in any parameters required.
+
